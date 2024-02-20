@@ -1,14 +1,14 @@
 /*
-    This is challenge 3 of set 1
-    Single-byte XOR cipher
+    This is challenge 4 of set 1
+    Detect single-character XOR
 
-    Input: 1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736
+    Input:
+    Output: "Now that the party is jumping\n"
 
-    Nota para Labsec: Já que era para ser criativo com a forma de avaliar as
-    possíveis mensagens descriptografadas, utilizei o livro The Horror at Red
-    Hook do autor H. P. Lovecraft para medir a frequência de letras num texto em
-    inglês. O livro em "plain text" foi baixado do Project Gutenberg ("www.gutenberg.org")
-    e seus diretos autorais já expiraram, então não tem problemas legais.
+    Nota para labsec: Como o próprio desafio já dizia, reutilizei as funções do
+    desafio anterior, só copiei e colei por achar mais conveniente. O programa 
+    demora alguns segundos pra calcular o resultado, provavelmente há algum
+    jeito mais performático de fazer.
 */
 
 #include <stdio.h>
@@ -121,10 +121,6 @@ char bin8digitToAsciiChar(unsigned int *bin) {
         decimal += bin[i] * pow(2, (7 - i));
     }
 
-    if (decimal > 127) {
-        exit(1);
-    }
-
     return char(decimal);
 }
 
@@ -164,30 +160,42 @@ char *decryptSentence(char *hexStr, unsigned int size, char key) {
     return decryptedSentence;
 }
 
-int main(int argc, char **argv) {
-    if (argc != 2) {
-        exit(1);
-    }
+int main() {
+    unsigned int hexStrSize = 60;
+    unsigned int sentenceSize = 60 / 2;
 
-    unsigned int hexStrLen = strlen(argv[1]);
-    unsigned int sentenceSize = int(hexStrLen / 2);
-
-    char *rightSentence = (char *)malloc(sizeof(char) * sentenceSize);
-    char bestKey;
     float bestScore = 0.0;
-    for (int i = 0; i < 128; i++) {
-        char *sentence = decryptSentence(argv[1], strlen(argv[1]), char(i));
-        float currentScore = getSentenceScore(sentence, sentenceSize);
+    char *bestLine = (char *)malloc(sizeof(char) * hexStrSize);
+    char *bestSentence = (char *)malloc(sizeof(char) * (hexStrSize / 2));
+    char bestKey;
 
-        if (currentScore > bestScore) {
-            bestKey = char(i);
-            bestScore = currentScore;
-            rightSentence = sentence;
+    std::ifstream file("4.txt");
+    char *currentLine = (char *)malloc(sizeof(char) * hexStrSize);
+    if (file.is_open()) {
+        while (file.good() && !file.eof()) {
+            file.getline(currentLine, hexStrSize + 1);
+
+            // Trying XOR with every ascii char
+            for (int i = 0; i < 128; i++) {
+                char *sentence = decryptSentence(currentLine, hexStrSize, char(i));
+                float currentScore = getSentenceScore(sentence, hexStrSize / 2);
+
+                if (currentScore > bestScore) {
+                    bestSentence = sentence;
+                    bestScore = currentScore;
+                    bestLine = currentLine;
+                    bestKey = char(i);
+                }
+            }
         }
     }
 
-    printf("A frase é: %s\n", rightSentence);
-    printf("O caractere utilizado no XOR foi: %c\n", bestKey);
-    printf("O score dessa frase foi: %f\n", bestScore);
-    free(rightSentence);
+    file.close();
+    
+    printf("A hex XOR'd com um único caractere é: %s\n", bestLine);
+    printf("A key de criptografia é %c e seu score foi %f\n", bestKey, bestScore);
+    printf("A frase descriptografada é %s\n", bestSentence);
+
+    free(bestLine); // free currentLine too
+    free(bestSentence); // free sentence too
 }
