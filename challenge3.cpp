@@ -22,17 +22,17 @@ float *getCharFreqAvg() {
 
     std::ifstream in("the_horror_at_red_hook.txt");
     char currentChar;
-    if (in.is_open() && !in.eof()) {
-        while (in.good()) {
+    if (in.is_open()) {
+        while (in.good() && !in.eof()) {
             in.get(currentChar);
             if (currentChar >= 0 && currentChar <= 127) {
                 charFrequencyAvg[int(currentChar)] += 1;
             }
             charCounter += 1;
         }
-    } else {
-        in.close();
     }
+
+    in.close();
 
     // Calculating Average
     for (int i = 0; i < 128; i++) {
