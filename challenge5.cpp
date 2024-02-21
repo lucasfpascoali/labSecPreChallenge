@@ -75,6 +75,7 @@ char *charToHexWithRepeatingKeyXOR(char *sentence, unsigned int size, char *key,
         hexStr[i * 2] = twoDigitsHex[0];
         hexStr[(i * 2) + 1] = twoDigitsHex[1];
 
+        free(twoDigitsHex);
         free(xordBin);
         free(bin); 
     }
@@ -93,4 +94,5 @@ int main() {
 
     char *encryptedSentence = charToHexWithRepeatingKeyXOR(input, inputSize, key, keySize); 
     printf("%s\n", encryptedSentence);
+    free(encryptedSentence);
 }
