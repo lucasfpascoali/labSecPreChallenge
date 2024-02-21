@@ -37,7 +37,6 @@ char *binToHexStr(unsigned int *bin, int size) {
 unsigned int *decimalTo8DigitBin(unsigned int decimalNumber) {
     // 2-digit hexdecimal will be 8-digit binary, so we need to have the same length
     unsigned int *bin = (unsigned int *)malloc(sizeof(unsigned int) * 8);
-    bool isEnd = false;
     for (int i = 7; i >= 0; i--) {
         if (decimalNumber < 1) {
             bin[i] = 0;
