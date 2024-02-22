@@ -122,7 +122,6 @@ unsigned int guessKeySize(unsigned int *txtInBin, unsigned int minSize, unsigned
 
         avgDistance /= keysize;
 
-        printf("O keysize %d tem score %f", keysize, avgDistance);
         if (avgDistance < shortestDistance || bestKeysize == 0) {
             bestKeysize = keysize;
             shortestDistance = avgDistance;
